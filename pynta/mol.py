@@ -21,7 +21,6 @@ import numpy as np
 import random
 
 # Need the following imports for type hinting functions
-# Need the following imports for type hinting functions
 from typing import NewType, Dict
 import rmgpy.molecule
 
@@ -100,7 +99,7 @@ def get_adsorbate(
     Arguments: 
         mol: the rmg molecule adsorbate
         
-    Outputs;
+    Outputs:
         atoms: ase Atoms object, same as get_conformer
         mol_to_atoms_map: dictionary containing the index number and the atom identity for a given gas
     """
