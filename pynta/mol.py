@@ -20,7 +20,24 @@ from copy import deepcopy
 import numpy as np
 import random
 
-def get_desorbed_with_map(mol):
+# Need the following imports for type hinting functions
+from typing import NewType, Dict
+import rdkit.Chem.rdchem.Mol
+
+def get_desorbed_with_map(
+    mol: rdkit.Chem.rdchem.Mol
+    ) -> rdkit.Chem.rdchem.Mol | Dict:
+    """
+    This function creates an identical copy of the mol object and generates a map 
+    of the atoms in the mol object.
+    
+    Inputs:
+        mol: rdkit_mol object in gas phase
+        
+    Outputs:
+        molcopy: copy of mol from input
+        out_map: dictionary containing the index number/atomic number 
+    """
     molcopy = mol.copy(deep=True)
     init_map = {i:a for i,a in enumerate(molcopy.atoms)}
 
@@ -38,7 +55,8 @@ def get_desorbed_with_map(mol):
     out_map = {i:molcopy.atoms.index(a) for i,a in init_map.items() if a in molcopy.atoms}
     return molcopy,out_map
 
-def get_conformer(desorbed):
+def get_conformer(
+    desorbed):
     try:
         rdmol,rdmap = desorbed.to_rdkit_mol(remove_h=False,return_mapping=True)
     except Exception as e:
