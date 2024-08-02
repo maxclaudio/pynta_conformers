@@ -21,18 +21,19 @@ import numpy as np
 import random
 
 # Need the following imports for type hinting functions
+# Need the following imports for type hinting functions
 from typing import NewType, Dict
-import rdkit.Chem.rdchem.Mol
+import rmgpy.molecule
 
 def get_desorbed_with_map(
-    mol: rdkit.Chem.rdchem.Mol
-    ) -> rdkit.Chem.rdchem.Mol | Dict:
+    mol: rmgpy.molecule
+    ) -> rmgpy.molecule | Dict:
     """
     This function creates an identical copy of the mol object and generates a map 
     of the atoms in the mol object.
     
     Inputs:
-        mol: rdkit_mol object in gas phase
+        mol: rmg molecule object in gas phase
         
     Outputs:
         molcopy: copy of mol from input
@@ -56,7 +57,17 @@ def get_desorbed_with_map(
     return molcopy,out_map
 
 def get_conformer(
-    desorbed):
+    desorbed: rmgpy.molecule
+    ) -> Atoms | Dict:
+    """
+    Arguments:
+        desorbed: takes in an rmg molecule object I assume generated from the reaction adjacency list that we provide in the 
+        Pynta() object.
+    
+    Returns:
+        atoms: an ASE atoms object
+        indmap: another index map for the atoms in ASE atoms object.
+    """
     try:
         rdmol,rdmap = desorbed.to_rdkit_mol(remove_h=False,return_mapping=True)
     except Exception as e:
@@ -79,7 +90,20 @@ def get_conformer(
     atoms = Atoms(symbols=syms,positions=pos)
     return atoms,indmap
 
-def get_adsorbate(mol):
+def get_adsorbate(
+    mol : rmgpy.molecule
+    ) -> Atoms | Dict:
+    """
+    Combines the funcitonality of the two previous functions: get_conformer and get_desorbed_with_map to
+    make the function call only require one call per adsorbate. 
+    
+    Arguments: 
+        mol: the rmg molecule adsorbate
+        
+    Outputs;
+        atoms: ase Atoms object, same as get_conformer
+        mol_to_atoms_map: dictionary containing the index number and the atom identity for a given gas
+    """
     desorbed,mol_to_desorbed_map = get_desorbed_with_map(mol)
     atoms,desorbed_to_atoms_map = get_conformer(desorbed)
     mol_to_atoms_map = {key:desorbed_to_atoms_map[val] for key,val in mol_to_desorbed_map.items()}
