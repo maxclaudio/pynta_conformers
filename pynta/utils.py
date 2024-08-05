@@ -1,6 +1,7 @@
 import shutil
 import os
 import ase
+from ase import Atoms
 from ase.utils.structure_comparator import SymmetryEquivalenceCheck
 from ase.io import write, read
 import ase.constraints
@@ -9,6 +10,24 @@ from importlib import import_module
 import numpy as np
 import copy
 
+def rdkit_mol_to_ase_atoms(rdkit_mol):
+    # Pulled from GitHub: https://gist.github.com/hunter-heidenreich/82c70c980d5b01ca304f270b1e92c824
+    
+    """Convert an RDKit molecule to an ASE Atoms object.
+    
+    Args:
+        rdkit_mol: RDKit molecule object.
+        
+    Returns:
+        ASE Atoms object.
+    """
+    ase_atoms = Atoms(
+        numbers=[
+            atom.GetAtomicNum() for atom in rdkit_mol.GetAtoms()
+        ], 
+        positions=rdkit_mol.GetConformer().GetPositions()
+    )
+    return ase_atoms
 
 def get_unique_sym(geoms):
     ''' Check for the symmetry equivalent structures in the given files

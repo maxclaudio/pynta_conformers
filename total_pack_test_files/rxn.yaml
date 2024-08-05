@@ -1,0 +1,37 @@
+- index: 0
+  reactant: 'multiplicity 1
+
+    1 *1 O u0 p2 c0 {2,S} {4,S}
+
+    2 C u0 p0 c0 {1,S} {3,S} {5,D}
+
+    3 H u0 p0 c0 {2,S}
+
+    4 *2 H u0 p0 c0 {1,S}
+
+    5 *3 X u0 p0 c0 {2,D}
+
+    6 *4 O u0 p2 c0 {7,D}
+
+    7 X u0 p0 c0 {6,D} 
+
+    '
+  product: 'multiplicity 1
+
+    1 *1 O u0 p2 c0 {2,D}
+
+    2 C u0 p0 c0 {1,D} {3,S} {5,S}
+
+    3 H u0 p0 c0 {2,S}
+
+    4 *2 H u0 p0 c0 {6,S}
+
+    5 *3 X u0 p0 c0 {2,S}
+
+    6 *4 O u0 p2 c0 {4,S} {7,S}
+
+    7 X u0 p0 c0 {6,S} 
+
+    '
+  reaction: OCX + OX <-> CHOX + O[Pt]
+  reaction_family: Eley-Rideal

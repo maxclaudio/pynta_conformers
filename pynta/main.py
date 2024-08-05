@@ -266,36 +266,37 @@ class Pynta:
             print(sm)
             surf_sites = mol.get_surface_sites()
 
-            ads,mol_to_atoms_map = get_adsorbate(mol)
-            if len(surf_sites) == 0:
-                if not skip_structs:
-                    ads.pbc = self.pbc
-                    ads.center(vacuum=10)
-                    structures[sm] = [ads]
-                gratom_to_molecule_atom_maps[sm] = {val:key for key,val in mol_to_atoms_map.items()}
-                gratom_to_molecule_surface_atom_maps[sm] = dict()
-            else:
-                if not skip_structs:
-                    #check if this adsorbate is already calculated
-                    if os.path.exists(os.path.join(self.path,"Adsorbates",sm)): #assume initial guesses already generated
-                        structures[sm] = None
-                    else:
-                        structs = generate_adsorbate_guesses(mol,ads,self.slab,cas,mol_to_atoms_map,self.metal,
-                                           self.single_site_bond_params_lists,self.single_sites_lists,
-                                           self.double_site_bond_params_lists,self.double_sites_lists,
-                                           self.Eharmtol,self.Eharmfiltertol,self.Ntsmin)
-                        structures[sm] = structs
+            for ads, mol_to_atoms_map in find_target_conformers(mol):
+            
+                if len(surf_sites) == 0:
+                    if not skip_structs:
+                        ads.pbc = self.pbc
+                        ads.center(vacuum=10)
+                        structures[sm] = [ads]
+                    gratom_to_molecule_atom_maps[sm] = {val:key for key,val in mol_to_atoms_map.items()}
+                    gratom_to_molecule_surface_atom_maps[sm] = dict()
+                else:
+                    if not skip_structs:
+                        #check if this adsorbate is already calculated
+                        if os.path.exists(os.path.join(self.path,"Adsorbates",sm)): #assume initial guesses already generated
+                            structures[sm] = None
+                        else:
+                            structs = generate_adsorbate_guesses(mol,ads,self.slab,cas,mol_to_atoms_map,self.metal,
+                                            self.single_site_bond_params_lists,self.single_sites_lists,
+                                            self.double_site_bond_params_lists,self.double_sites_lists,
+                                            self.Eharmtol,self.Eharmfiltertol,self.Ntsmin)
+                            structures[sm] = structs
 
 
-                gratom_to_molecule_atom_maps[sm] = {val:key for key,val in mol_to_atoms_map.items()}
+                    gratom_to_molecule_atom_maps[sm] = {val:key for key,val in mol_to_atoms_map.items()}
 
-                adatoms = []
-                surf_index_atom_map = dict()
-                for i,atm in enumerate(mol.atoms):
-                    if atm.is_bonded_to_surface():
-                        surf_index_atom_map[mol_to_atoms_map[i]] = i
+                    adatoms = []
+                    surf_index_atom_map = dict()
+                    for i,atm in enumerate(mol.atoms):
+                        if atm.is_bonded_to_surface():
+                            surf_index_atom_map[mol_to_atoms_map[i]] = i
 
-                gratom_to_molecule_surface_atom_maps[sm] = surf_index_atom_map
+                    gratom_to_molecule_surface_atom_maps[sm] = surf_index_atom_map
 
         self.gratom_to_molecule_atom_maps = gratom_to_molecule_atom_maps
         self.gratom_to_molecule_surface_atom_maps = gratom_to_molecule_surface_atom_maps
